@@ -1,9 +1,9 @@
 var mongodb = require('./db');
 
 function User(user) {
-	this.name = user.name;
-	this.password = user.password;
-	this.email = user.email;
+  this.name = user.name;
+  this.password = user.password;
+  this.email = user.email;
 };
 
 module.exports = User;
@@ -57,7 +57,7 @@ User.get = function (name, callback) {
 			collection.findOne({
 				name: name
 			},function (err, user) {
-				mongodb.colse();
+				mongodb.close();
 				if(err){
 					return callback(err);
 				}
