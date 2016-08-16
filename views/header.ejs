@@ -17,11 +17,22 @@
 	<div class="row">
     	<div class="col-xs-3">
     		<nav>
-    			<ul>
-    				<li><a href="/">HOME</a></li>
-    				<li><a href="/login">LOGIN</a></li>
-    				<li><a href="/reg">REGISTER</a></li>
+                <ul>
+    				<li><a href="/">主页</a></li>
+                    <% if( user ) { %>
+                    <li><a href="/post">发表</a></li>
+                    <li><a href="/logout">登出</a></li>  
+                    <% }else{ %>
+    				<li><a href="/login">登录</a></li>
+                    <li><a href="/reg">注册</a></li>    
+                    <% } %>
     			</ul>
     		</nav>
     	</div>
     	<article class="col-xs-9">
+        <% if (success) { %>
+          <div><%= success %></div>
+        <% } %>
+        <% if (error) { %>
+          <div><%= error %> </div>
+        <% } %>

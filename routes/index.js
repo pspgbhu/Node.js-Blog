@@ -5,7 +5,12 @@ var	User = require('../models/user.js');
 
 /* home page. */
 router.get('/', function(req, res, next) {
-  res.render('index',{ title: '主页'});
+	res.render('index', {
+		title: '主页',
+		user: req.session.user,
+		success: req.flash('success').toString(),
+		error: req.flash('error').toString()
+	});
 });
 
 /* login page. */
@@ -16,9 +21,22 @@ router.get('/login',function (req, res, next) {
 router.post('/login',function (req, res) {
 })
 
+/* logout page. */
+router.get('/logout',function (req, res, next) {
+	res.render('logout',{ title: '登录'})
+})
+
+router.post('/logout',function (req, res) {
+})
+
 /* reg page. */
 router.get('/reg',function (req, res, next) {
-	res.render('reg',{ title: '注册'})
+	res.render('reg', {
+		title: '注册',
+		user: req.session.user,
+		success: req.flash('success').toString(),
+		error: req.flash('error').toString()
+	});
 })
 
 router.post('/reg',function (req, res) {
@@ -43,21 +61,18 @@ router.post('/reg',function (req, res) {
 	//检查用户名是否存在
 	User.get(newUser.name, function (err, user){
 		if(err) {
-			//req.flash('error', err);
-			// return res.redirect('/')
-			return res.send('error')
+			req.flash('error', err);
+			return res.redirect('/')
 		}
 		if(user) {
 			req.flash('error','用户已存在！')
-			// return res.redirect('/reg')
-			return res.send('已存在')
+			return res.redirect('/reg')
 		}
 		//如果不存在则新增用户
 		newUser.save(function (err, user) {
 			if(err){
-				// req.flash('error', err)
-				// return res.redirect('/reg')
-				return res.send('error2')
+				req.flash('error', err)
+				return res.redirect('/reg')
 			}
 			req.session.user = newUser;//用户信息存入session
 			req.flash('success','注册成功!')
