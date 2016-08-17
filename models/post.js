@@ -10,7 +10,7 @@ module.exports = Post;
 
 Post.prototype.save = function (callback) {
 	//储存各种时间，方便以后拓展
-	var data = new Data();
+	var date = new Date();
 	var time = {
 		date: date,
     year : date.getFullYear(),
@@ -31,8 +31,6 @@ Post.prototype.save = function (callback) {
   	if(err){
   		return callback(err);
   	}
-  	var set =  db.user
-  	console.log()
   	//读取posts集合
   	db.collection('posts',function (err, collection) {
   		if(err){
@@ -48,7 +46,6 @@ Post.prototype.save = function (callback) {
   				return callback(err);
   			}
   			callback(null);
-
   		});
   	});
   });
@@ -74,7 +71,13 @@ Post.get =function (name, callback) {
 			//跟据query对象查找文章
 			collection.find(query).sort({
 				time: -1
+			}).toArray(function (err, docs) {
+				mongodb.close();
+				if(err){
+					return callback(err);
+				};
+				callback(null, docs);
 			})
-		})
-	})
-}
+		});
+	});
+};

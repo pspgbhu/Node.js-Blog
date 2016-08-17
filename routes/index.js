@@ -2,16 +2,22 @@ var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
 var	User = require('../models/user.js');
-
+var Post = require('../models/post.js');
 
 /* home page. */
 router.get('/', function(req, res, next) {
-	res.render('index', {
-		title: '主页',
-		user: req.session.user,
-		success: req.flash('success').toString(),
-		error: req.flash('error').toString()
-	});
+	Post.get(null, function (err, posts) {
+		if(err){
+			posts = [];
+		}
+		res.render('index', {
+			title: '主页',
+			user: req.session.user,
+			posts: posts,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
+	})
 });
 
 /* login page. */
@@ -63,8 +69,8 @@ router.get('/reg',function (req, res, next) {
 router.post('/reg',checkLogin);
 router.post('/reg',function (req, res) {
 	var name = req.body.name,
-		password = req.body.password,
-		password_re = req.body.passwordrepeat;
+			password = req.body.password,
+			password_re = req.body.passwordrepeat;
 	//检验两次密码是否一致
 	if(password != password_re){
 		req.flash('error','两次输入的密码不一致！');
@@ -115,7 +121,17 @@ router.get('/post',function (req, res, next) {
 })
 
 router.post('/post',function (req, res) {
-})
+	var currentUser = req.session.user;
+	var post = new Post(currentUser.name, req.body.title, req.body.post);
+	post.save(function (err) {
+		if(err){
+			req.flash('error', err)
+			return res.redirect('/')
+		}
+		req.flash('success','发表成功！')
+		res.redirect('/');
+	});
+});
 
 /* logout page. */
 router.get('/logout',checkLogout);
