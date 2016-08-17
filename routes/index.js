@@ -6,7 +6,7 @@ var Post = require('../models/post.js');
 
 /* home page. */
 router.get('/', function(req, res, next) {
-	Post.get(null, function (err, posts) {
+	Post.getAll(null, function (err, posts) {
 		if(err){
 			posts = [];
 		}

@@ -1,6 +1,26 @@
 article{
 	padding: 20px 0;	
 }
+.home{
+	display: flex;
+}
 .home-h1{
 	border-bottom: 1px solid #c9c9c9
+}
+.nav nav{
+	margin-top: 65px
+}
+.nav ul li{
+	font-size: 18px;
+	list-style: none;
+	padding: 8px 0;
+}
+.nav{
+	width: 150px;
+}
+.content{
+	width: 100%;
+}
+.reg{
+	max-width: 400px;
 }

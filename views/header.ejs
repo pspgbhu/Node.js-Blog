@@ -8,28 +8,25 @@
 </head>
 <body>
 <div class="container home">
-	<div class="row">
-		<div class="col-xs-3"></div>
-		<div class="col-xs-9 home-h1">
-			<h1><%= title%></h1>
-		</div>
-	</div>
-	<div class="row">
-    	<div class="col-xs-3">
-    		<nav>
-                <ul>
-    				<li><a href="/">主页</a></li>
-                    <% if( user ) { %>
-                    <li><a href="/post">发表</a></li>
-                    <li><a href="/logout">登出</a></li>  
-                    <% }else{ %>
-    				<li><a href="/login">登录</a></li>
-                    <li><a href="/reg">注册</a></li>    
-                    <% } %>
-    			</ul>
-    		</nav>
-    	</div>
-    	<article class="col-xs-9">
+	<div class="nav">
+		<nav>
+            <ul>
+				<li><a href="/">主页</a></li>
+                <% if( user ) { %>
+                <li><a href="/post">发表</a></li>
+                <li><a href="/logout">登出</a></li>  
+                <% }else{ %>
+				<li><a href="/login">登录</a></li>
+                <li><a href="/reg">注册</a></li>    
+                <% } %>
+			</ul>
+		</nav>
+    </div>
+    <div class="content">
+        <div class="home-h1">
+            <h1><%= title%></h1>
+        </div>
+    	<article class="article">
         <% if (success) { %>
             <div><%= success %></div>
         <% } %>
