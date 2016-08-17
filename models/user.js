@@ -10,6 +10,7 @@ module.exports = User;
 
 //储存用户信息
 User.prototype.save = function (callback) {
+	//要储存的信息
 	var user = {
 		name: this.name,
 		password: this.password,
@@ -53,7 +54,7 @@ User.get = function (name, callback) {
 				mongodb.close();
 				return callback(err);
 			}
-			//query the doc which the value of username(key:name) named 'name'
+			//query the doc which the value of username(key:name) be named name
 			collection.findOne({
 				name: name
 			},function (err, user) {
