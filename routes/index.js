@@ -66,18 +66,28 @@ router.get('/reg',function (req, res, next) {
 		error: req.flash('error').toString()
 	});
 })
+
 router.post('/reg',checkLogin);
 router.post('/reg',function (req, res) {
 	var name = req.body.name,
 			password = req.body.password,
 			password_re = req.body.passwordrepeat;
+			email = req.body.email
+	//检验用户名密码是否为空
+	if(name === "" || password === "" || name === null || password === null ){
+		req.flash('error','用户名或密码不能为空！')
+		return res.redirect('/reg');
+	};
+	//检验邮箱是否为空
+	if(email === "" || email === null){
+		req.flash('error','请输入正确的邮箱地址！')
+		return res.redirect('/reg');
+	}
 	//检验两次密码是否一致
 	if(password != password_re){
 		req.flash('error','两次输入的密码不一致！');
-		return res.redirect('/');//返回注册页
-	}
-
-
+		return res.redirect('/reg');//返回注册页
+	};
 	//生成密码的md5值
 	var md5 = crypto.createHash('md5'),
 			password = md5.update(req.body.password).digest('hex');
@@ -122,7 +132,13 @@ router.get('/post',function (req, res, next) {
 
 router.post('/post',function (req, res) {
 	var currentUser = req.session.user;
-	var post = new Post(currentUser.name, req.body.title, req.body.post);
+	var title = req.body.title;
+	var article = req.body.post;
+	var post = new Post(currentUser.name, title, article);
+	if(title ==="" || article ==="" || title === null || article === null){
+		req.flash('error','标题或正文不能为空！')
+		res.redirect('/post');
+	}
 	post.save(function (err) {
 		if(err){
 			req.flash('error', err)
@@ -133,6 +149,8 @@ router.post('/post',function (req, res) {
 	});
 });
 
+/* uppic */
+
 /* logout page. */
 router.get('/logout',checkLogout);
 router.get('/logout',function (req, res, next) {
@@ -140,6 +158,7 @@ router.get('/logout',function (req, res, next) {
 	req.flash('success',"登出成功！");
 	res.redirect('/')
 });
+
 
 function checkLogin(req, res, next) {
 	if(req.session.user){
