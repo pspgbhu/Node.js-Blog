@@ -1,8 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
 var	User = require('../models/user.js');
 var Post = require('../models/post.js');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 /* home page. */
 router.get('/', function(req, res, next) {
@@ -19,6 +23,7 @@ router.get('/', function(req, res, next) {
 		});
 	})
 });
+
 
 /* login page. */
 router.get('/login',checkLogin);
@@ -119,6 +124,7 @@ router.post('/reg',function (req, res) {
 	})
 })
 
+
 /* post page. */
 router.get('/post',checkLogout);
 router.get('/post',function (req, res, next) {
@@ -149,7 +155,13 @@ router.post('/post',function (req, res) {
 	});
 });
 
+
 /* uppic */
+router.post('/uppic', multipartMiddleware, function(req, res){
+	res.send(req.body);
+  // don't forget to delete all req.files when done
+});
+
 
 /* logout page. */
 router.get('/logout',checkLogout);
@@ -175,5 +187,6 @@ function checkLogout(req, res, next) {
 	}
 	next();
 }
+
 
 module.exports = router;
