@@ -1,11 +1,15 @@
 <%- include header %>
-<form method="post" action="/edit/<%= pname %>/<%= pday %>/<%= ptitle %>">
-	标题：<br />
+<form method="post" action="/edit/<%= post.name %>/<%= post.day %>/<%= post.title %>">
 
-	<input type="text" name="title" id="title" value="<%= ptitle %>" disabled="disabled"  placeholder="请输入标题">
+	标题：<br />	
+	<div class="form-group">
+	  	<input type="text" name="title" class="form-control" name="title" id="title" value="<%= post.title %>" disabled="disabled"  />
+	</div>
+
 	正文：<br />
-
-	<textarea rows="8" class="form-control" name="post" placeholder="请输入正文内容" id="mytextarea" ></textarea><br />
+	<textarea rows="8" class="form-control" name="post"  id="mytextarea">
+		<%= post.post %>
+	</textarea><br />
 
 	<input type="submit" class="btn btn-primary btn-lg" value="保存修改" />
 </form>

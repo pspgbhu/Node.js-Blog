@@ -236,12 +236,13 @@ router.get('/u/:name/:day/:title', function (req, res) {
 /* edit */
 router.get('/edit/:name/:day/:title', checkLogout);
 router.get('/edit/:name/:day/:title', function (req, res){
-	var currentUser = req.session.user;
+	var currentUser = req.session.user.name;
 	Post.edit(currentUser, req.params.day, req.params.title, function (err, post) {
 		if(err){
 			req.flash('error',err);
 			return res.redirect('back');
 		};
+		// res.send(post)
 		res.render('edit',{
 			title: '编辑',
 			post: post,

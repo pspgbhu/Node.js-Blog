@@ -112,24 +112,51 @@ Post.getOne = function (name, day, title, callback) {
   });
 };
 
-//返回原始发表内容的markdown形式
+//返回原始发表的内容（markdown 格式）
 Post.edit = function (name, day, title, callback) {
   mongodb.open(function (err, db) {
     if(err){
-      return  callback(err);
+      return callback(err);
     }
-    db.collection('posts',function (err, collection) {
+    db.collection('posts', function (err, collection) {
       collection.findOne({
         "name": name,
         "time.day": day,
         "title": title
-      }, function (err, doc){
+      },function (err, doc) {
         mongodb.close();
         if(err){
           return callback(err);
         };
-        callback(null, doc)
-      });
-    });
-  });
-};
+        callback(null, doc);
+      })
+    })
+  })
+}
+
+//更新一篇文章
+Post.update = function (name, day, title, post, callback) {
+  mongodb.open(function (err, db) {
+    if(err){
+      return callback(err);
+    }
+    db.collection('posts',function (err, collection) {
+      if(err){
+        return callback(err);
+      };
+      collection.update({
+        "name": name,
+        "time.day": day,
+        "title": title
+      },{
+        $set: {post: post}
+      },function (err) {
+        mongodb.close();
+        if(err){
+          return callback(err);
+        };
+        callback(null)
+      })
+    })
+  })
+}
