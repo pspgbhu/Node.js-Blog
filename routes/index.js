@@ -5,8 +5,6 @@ var multer  = require('multer');
 var upload = multer({ dest: 'uploads/' });
 var	User = require('../models/user.js');
 var Post = require('../models/post.js');
-var multipart = require('connect-multiparty');
-var multipartMiddleware = multipart();
 
 /* home page. */
 router.get('/', function(req, res, next) {
@@ -136,6 +134,7 @@ router.get('/post',function (req, res, next) {
 	})
 })
 
+router.post('/post',checkLogout);
 router.post('/post',function (req, res) {
 	var currentUser = req.session.user;
 	var title = req.body.title;
@@ -144,23 +143,41 @@ router.post('/post',function (req, res) {
 	if(title ==="" || article ==="" || title === null || article === null){
 		req.flash('error','标题或正文不能为空！')
 		res.redirect('/post');
+	}else{
+		post.save(function (err) {
+			if(err){
+				req.flash('error', err)
+				return res.redirect('/')
+			}
+			req.flash('success','发表成功！')
+			res.redirect('/');
+		});
 	}
-	post.save(function (err) {
-		if(err){
-			req.flash('error', err)
-			return res.redirect('/')
+});
+
+
+/* upload */
+var storage = multer.diskStorage({
+    destination: function (req, file, cb){
+        cb(null, './public/images')
+    },
+    filename: function (req, file, cb){
+        cb(null, file.originalname)
+    }
+});
+var upload = multer({
+    storage: storage
+});
+router.post('/upload', upload.single('file'), function (req, res, next) {
+	res.json({
+		code : 200,
+		data : {
+			headersHost: req.headers.host,
+			name: req.file.originalname
 		}
-		req.flash('success','发表成功！')
-		res.redirect('/');
-	});
+	})
 });
 
-
-/* uppic */
-router.post('/uppic', multipartMiddleware, function(req, res){
-	res.send(req.body);
-  // don't forget to delete all req.files when done
-});
 
 
 /* logout page. */
@@ -171,6 +188,70 @@ router.get('/logout',function (req, res, next) {
 	res.redirect('/')
 });
 
+
+/* user */
+router.get('/u/:name',checkLogout);
+router.get('/u/:name', function (req, res) {
+	User.get(req.params.name, function (err, user) {
+		if(!user){
+			req.flash('error', '用户不存在！');
+			return res.redirect('/');
+		}
+		Post.getAll(user.name, function (err, posts) {
+			if(err){
+				req.flash('error', err);
+				return res.redirect('/');
+			}
+			res.render('user', {
+				title: user.name,
+				posts: posts,
+				user : req.session.user,
+				success: req.flash('success').toString(),
+				error: req.flash('error').toString()
+			});
+		});
+	});
+});
+
+
+/* article */
+router.get('/u/:name/:day/:title',checkLogout);
+router.get('/u/:name/:day/:title', function (req, res) {
+	Post.getOne(req.params.name, req.params.day, req.params.title, function (err, post) {
+		if(err){
+			req.flash('error', err);
+			return res.redirect('/')
+		}
+		res.render('article',{
+			title: req.params.title,
+			post: post,
+			user: req.session.user,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
+	});
+});
+
+
+/* edit */
+router.get('/edit/:name/:day/:title', checkLogout);
+router.get('/edit/:name/:day/:title', function (req, res){
+	var currentUser = req.session.user;
+	Post.edit(currentUser, req.params.day, req.params.title, function (err, post) {
+		if(err){
+			req.flash('error',err);
+			return res.redirect('back');
+		};
+		res.render('edit',{
+			title: '编辑',
+			post: post,
+			name: post.name,
+			user: req.session.user,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
+	});
+});
 
 function checkLogin(req, res, next) {
 	if(req.session.user){

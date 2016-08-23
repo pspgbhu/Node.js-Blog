@@ -1,0 +1,11 @@
+<%- include header %>
+	<p>
+	  	<a href="/edit/<%= post.name %>/<%= post.time.day %>/<%= post.title %>" type="button" class="btn btn-default btn-sm" id="eidt" >编辑</a>
+	  	<a type="button" class="btn btn-default btn-sm" id="del" >删除</a>
+	</p>
+	<p class="info">
+	  	作者：<a href="/u/<%= post.name %>"><%= post.name %></a> | 
+	  	日期：<%= post.time.minute %>
+	</p>
+	<p><%- post.post %></p>
+<%- include footer %>
