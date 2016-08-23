@@ -160,3 +160,28 @@ Post.update = function (name, day, title, post, callback) {
     })
   })
 }
+
+//删除一篇文章
+Post.remove = function (name, day, title, callback) {
+  mongodb.open(function (err, db) {
+    if(err){
+      return callback(err);
+    } 
+    db.collection('posts', function (err, collection) {
+      if(err){
+         return callback(err);
+      }
+      collection.remove({
+        "name": name,
+        "time.day": day,
+        "title": title
+      },function (err) {
+        mongodb.close();
+        if(err){
+          callback(err);
+        };
+        callback(null);
+      });
+    });
+  });
+};

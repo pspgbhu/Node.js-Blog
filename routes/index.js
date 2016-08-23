@@ -236,13 +236,12 @@ router.get('/u/:name/:day/:title', function (req, res) {
 /* edit */
 router.get('/edit/:name/:day/:title', checkLogout);
 router.get('/edit/:name/:day/:title', function (req, res){
-	var currentUser = req.session.user.name;
-	Post.edit(currentUser, req.params.day, req.params.title, function (err, post) {
+	var currentUser = req.session.user;
+	Post.edit(currentUser.name, req.params.day, req.params.title, function (err, post) {
 		if(err){
 			req.flash('error',err);
 			return res.redirect('back');
 		};
-		// res.send(post)
 		res.render('edit',{
 			title: '编辑',
 			post: post,
@@ -253,6 +252,36 @@ router.get('/edit/:name/:day/:title', function (req, res){
 		});
 	});
 });
+
+router.post('/edit/:name/:day/:title',checkLogout);
+router.post('/edit/:name/:day/:title',function (req, res) {
+	var currentUser = req.session.user;
+	Post.update(currentUser.name, req.params.day, req.params.title, req.body.post, function (err) {
+		var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title)
+		if(err){
+			req.flash('error',err);
+			return res.redirect('/');
+		}
+		req.flash('success','修改成功！')
+		return res.redirect(url);
+	})
+})
+
+
+/* remove */
+router.get('/remove/:name/:day/:title',checkLogout);
+router.get('/remove/:name/:day/:title',function (req, res) {
+	var currentUser = req.session.user;
+	Post.remove(req.params.name, req.params.day, req.params.title, function (err) {
+		if(err){
+			req.flash('error', err);
+			return res.redirect('back');
+		};
+		req.flash('success','删除成功！')
+		res.redirect('/');
+	})
+})
+
 
 function checkLogin(req, res, next) {
 	if(req.session.user){
