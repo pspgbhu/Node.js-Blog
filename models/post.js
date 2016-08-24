@@ -25,7 +25,8 @@ Post.prototype.save = function (callback) {
   	name: this.name,
   	time: time,
   	title: this.title,
-  	post: this.post
+  	post: this.post,
+    comments: []
   };
   //打开数据库
   mongodb.open(function (err, db) {
@@ -53,7 +54,7 @@ Post.prototype.save = function (callback) {
 };
 
 //读取所有文章及其相关信息
-Post.getAll =function (name, callback) {
+Post.getFive =function (name, page,callback) {
 	//打开数据库
 	mongodb.open(function (err, db) {
 		if(err){
@@ -70,18 +71,23 @@ Post.getAll =function (name, callback) {
 				query.name = name;
 			}
 			//跟据query对象查找文章
-			collection.find(query).sort({
-				time: -1
-			}).toArray(function (err, docs) {
-				mongodb.close();
-				if(err){
-					return callback(err);
-				};
-        docs.forEach(function (doc) {
-          doc.post = markdown.toHTML(doc.post);
-        });
-				callback(null, docs);
-			})
+			collection.count(query,function (err, total) {
+        collection.find(query, {
+          skip: (page - 1) * 5,
+          limit: 5
+        }).sort({
+          time: -1
+        }).toArray(function (err, docs) {
+          mongodb.close();
+          if(err){
+            return callback(err);
+          };
+          docs.forEach(function (doc) {
+            doc.post = markdown.toHTML(doc.post);
+          });
+          callback(null, docs, total);
+  			});
+			});
 		});
 	});
 };
@@ -105,7 +111,14 @@ Post.getOne = function (name, day, title, callback) {
         if(err){
           return callback(err);
         };
-        doc.post = markdown.toHTML(doc.post);
+        if(doc){
+          doc.post = markdown.toHTML(doc.post);
+          if(doc.comments){
+            doc.comments.forEach(function (comment) {
+              comment.content = markdown.toHTML(comment.content)
+            });
+          }
+        };
         callback(null, doc);
       });
     });

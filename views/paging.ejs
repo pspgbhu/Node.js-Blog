@@ -1,0 +1,21 @@
+<br />
+<div>
+	<nav>
+		<ul class="pagination">
+			<% if(!isFirstPage) {%>
+			<li>
+				<a href="?p=<%= page-1 %>">
+					<span aria-hidden="true">上一页</span>
+				</a>
+			</li>
+			<% } %>
+			<% if(!isLastPage) {%>
+			<li>
+				<a href="?p=<%= page+1 %>">
+					<span aria-hidden="true">下一页</span>
+				</a>
+			</li>
+			<% } %>
+		</ul>
+	</nav>
+</div>

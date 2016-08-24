@@ -5,10 +5,12 @@ var multer  = require('multer');
 var upload = multer({ dest: 'uploads/' });
 var	User = require('../models/user.js');
 var Post = require('../models/post.js');
+var Comment = require('../models/comment.js')
 
 /* home page. */
 router.get('/', function(req, res, next) {
-	Post.getAll(null, function (err, posts) {
+	var page = parseInt(req.query.p) || 1
+	Post.getFive(null, page, function (err, posts, total) {
 		if(err){
 			posts = [];
 		}
@@ -16,6 +18,9 @@ router.get('/', function(req, res, next) {
 			title: '主页',
 			user: req.session.user,
 			posts: posts,
+			page: page,
+			isFirstPage: (page - 1) == 0,
+			isLastPage:((page - 1) * 5 + posts.length) == total,
 			success: req.flash('success').toString(),
 			error: req.flash('error').toString()
 		});
@@ -104,7 +109,7 @@ router.post('/reg',function (req, res) {
 		if(err) {
 			req.flash('error', err);
 			return res.redirect('/')
-		}
+		} 
 		if(user) {
 			req.flash('error','用户已存在！')
 			return res.redirect('/reg')
@@ -197,7 +202,7 @@ router.get('/u/:name', function (req, res) {
 			req.flash('error', '用户不存在！');
 			return res.redirect('/');
 		}
-		Post.getAll(user.name, function (err, posts) {
+		Post.getFive(user.name, page, function (err, posts, total) {
 			if(err){
 				req.flash('error', err);
 				return res.redirect('/');
@@ -206,6 +211,9 @@ router.get('/u/:name', function (req, res) {
 				title: user.name,
 				posts: posts,
 				user : req.session.user,
+				page: page,
+        isFirstPage: (page - 1) == 0,
+        isLastPage: ((page - 1) * 10 + posts.length) == total,
 				success: req.flash('success').toString(),
 				error: req.flash('error').toString()
 			});
@@ -282,6 +290,9 @@ router.get('/remove/:name/:day/:title',function (req, res) {
 	})
 })
 
+
+/* comment */
+router.get('')
 
 function checkLogin(req, res, next) {
 	if(req.session.user){
