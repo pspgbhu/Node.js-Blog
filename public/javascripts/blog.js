@@ -28,11 +28,42 @@ function uploadFile(){
   return imgsrc;
 };
 
+//myField 光标所在的控件名 document.Form.XXX 
+//myValue 所要插入的值 
+function insertAtCursor(myField, myValue) { 
+  	// IE 
+    if (document.selection)   
+    {   
+    	myField.focus();   
+    	sel = document.selection.createRange();   
+   
+    	sel.text = myValue;   
+    	sel.select();
+    }   
+		else if (myField.selectionStart || myField.selectionStart == '0') { 
+      // MOZILLA/NETSCAPE support 
 
+      //起始位置 
+      var startPos = myField.selectionStart; 
+
+      //结束位置 
+      var endPos = myField.selectionEnd; 
+
+      //插入信息 
+      myField.value = myField.value.substring(0, startPos) 
+          + myValue 
+          + myField.value.substring(endPos, myField.value.length); 
+    } else { 
+
+      //没有焦点的话直接加在TEXTAREA的最后一位 
+      myField.value += myValue; 
+    } 
+}
 function iaddimg() {
-	var mytextarea = document.getElementById('mytextarea')
-	var src = '![Alt text](' + uploadFile() + ')'	
-	mytextarea.value += src;
+	var mytextarea = document.getElementById('mytextarea');
+	var src = '![Alt text](' + uploadFile() + ')'	;
+	insertAtCursor(mytextarea, src);
+	// mytextarea.value += src;
 }
 
 
