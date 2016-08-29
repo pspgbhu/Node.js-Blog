@@ -1,31 +1,35 @@
 <%- include header %>
 <%- include header_main %>
 <div class="page-article">
+
 	<div class="article content">
 		<h2><%= post.title %></h2>
+		<% if(user && user.name === post.name){ %>	
 		<p>
-			<% if(user && user.name === post.name){ %>
 		  	<a href="/edit/<%= post.name %>/<%= post.time.day %>/<%= post.title %>" type="button" class="btn btn-default btn-sm" id="eidt" >编辑</a>
 		  	<a type="button" class="btn btn-default btn-sm" id="del" href="/remove/<%= post.name %>/<%= post.time.day %>/<%= post.title %>" >删除</a>
-			<% } %>
 		</p>
+		<% } %>
 		<p class="info">
 		  	作者：<a href="/u/<%= post.name %>"><%= post.name %></a> | 
 		  	日期：<%= post.time.minute %>
 		</p>
-		<p><%- post.post %></p>
+		<article><%- post.post %></article>
 	</div>
 	
+
 	<h2>留言板：</h2>	
 	<div class="comments content">
+	
 	</div>
+
 
 	<h2>游客留言：</h2>		
 	<div class="newComment content">
-		<form action="post">
+		<form method="post" action="/<%= post.time.day %>/<%= post.title %>">
 			<div class="form-group">
 				<p>昵称：</p>
-				<input type="email" class="form-control" name="visitorName" placeholder="请输入您的昵称">
+				<input type="text" class="form-control" name="visitorName" placeholder="请输入您的昵称">
 			</div>
 			<div class="form-group">
 				<p>邮箱地址：</p>
@@ -34,11 +38,12 @@
 			</div>
 			<div class="form-group">
 				<p>留言内容：</p>
-				<textarea class="form-control" rows="5" placeholder="请输入留言内容"></textarea>
+				<textarea class="form-control" name="visitorContent" rows="5" placeholder="请输入留言内容"></textarea>
 			</div>
 			<button type="submit" class="btn btn-default">提交</button>
 		</form>
 	</div>
+
 
 </div>
 <%- include footer_main %>

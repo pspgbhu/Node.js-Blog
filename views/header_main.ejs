@@ -5,6 +5,10 @@
 			<li><a href="/">HOME</a></li>
 			<li><a href="/blog">BLOG</a></li>
 			<li><a href="/about">ABOUT ME</a></li>
+			<% if(user){ %>
+			<li><a href="/post">POST</a></li>
+			<li><a href="/logout">LOGOUT</a></li>
+			<% } %>
 		</ul>
 	</div>
 </div>

@@ -26,7 +26,7 @@ Post.prototype.save = function (callback) {
   	time: time,
   	title: this.title,
   	post: this.post,
-    comments: []
+    comments: {}
   };
   //打开数据库
   mongodb.open(function (err, db) {
@@ -73,8 +73,8 @@ Post.getFive =function (name, page,callback) {
 			//跟据query对象查找文章
 			collection.count(query,function (err, total) {
         collection.find(query, {
-          skip: (page - 1) * 5,
-          limit: 5
+          skip: (page - 1) * 10,
+          limit: 10
         }).sort({
           time: -1
         }).toArray(function (err, docs) {

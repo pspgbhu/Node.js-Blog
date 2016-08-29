@@ -7,7 +7,6 @@ function Comment(name, day, title, comment) {
 	this.comment = comment;
 }
 
-
 module.exports = Comment;
 
 

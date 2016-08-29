@@ -7,33 +7,6 @@ var	User = require('../models/user.js');
 var Post = require('../models/post.js');
 var Comment = require('../models/comment.js')
 
-/* index page */
-router.get('/',function (req, res, next) {
-	res.render('index', {title: 'pspgbhu的主页'});
-})
-
-
-/* blog page. */
-router.get('/blog', function(req, res, next) {
-	var page = parseInt(req.query.p) || 1
-	Post.getFive(null, page, function (err, posts, total) {
-		if(err){
-			posts = [];
-		}
-		res.render('blog', {
-			title: '主页',
-			user: req.session.user,
-			posts: posts,
-			page: page,
-			isFirstPage: (page - 1) == 0,
-			isLastPage:((page - 1) * 10 + posts.length) == total,
-			success: req.flash('success').toString(),
-			error: req.flash('error').toString()
-		});
-	})
-});
-
-
 /* login page. */
 // router.get('/login',checkLogin);
 router.get('/login',function (req, res, next) {
@@ -44,6 +17,73 @@ router.get('/login',function (req, res, next) {
 		error: req.flash('error').toString()
 	})
 });
+
+
+
+
+// /* reg page. */
+// // router.get('/reg',checkLogin)
+// router.get('/reg',function (req, res, next) {
+// 	res.render('reg', {
+// 		title: '注册',
+// 		user: req.session.user,
+// 		success: req.flash('success').toString(),
+// 		error: req.flash('error').toString()
+// 	});
+// })
+
+// // router.post('/reg',checkLogin);
+// router.post('/reg',function (req, res) {
+// 	var name = req.body.name,
+// 			password = req.body.password,
+// 			password_re = req.body.passwordrepeat;
+// 			email = req.body.email
+// 	//检验用户名密码是否为空
+// 	if(name === "" || password === "" || name === null || password === null ){
+// 		req.flash('error','用户名或密码不能为空！')
+// 		return res.redirect('/reg');
+// 	};
+// 	//检验邮箱是否为空
+// 	if(email === "" || email === null){
+// 		req.flash('error','请输入正确的邮箱地址！')
+// 		return res.redirect('/reg');
+// 	}
+// 	//检验两次密码是否一致
+// 	if(password != password_re){
+// 		req.flash('error','两次输入的密码不一致！');
+// 		return res.redirect('/reg');//返回注册页
+// 	};
+// 	//生成密码的md5值
+// 	var md5 = crypto.createHash('md5'),
+// 			password = md5.update(req.body.password).digest('hex');
+// 	var newUser = new User({
+// 			name: name,
+// 			password: password,
+// 			email: req.body.email
+// 	});
+// 	//检查用户名是否存在
+// 	User.get(newUser.name, function (err, user){
+// 		if(err) {
+// 			req.flash('error', err);
+// 			return res.redirect('/')
+// 		} 
+// 		if(user) {
+// 			req.flash('error','用户已存在！')
+// 			return res.redirect('/reg')
+// 		}
+// 		//如果不存在则新增用户
+// 		newUser.save(function (err, user) {
+// 			if(err){
+// 				req.flash('error', err)
+// 				return res.redirect('/reg')
+// 			}
+// 			req.session.user = newUser;//用户信息存入session
+// 			req.flash('success','注册成功!')
+// 			res.redirect('/');
+// 		})
+// 	})
+// })
+
 
 // router.post('/login',checkLogin);
 router.post('/login',function (req, res) {
@@ -70,69 +110,32 @@ router.post('/login',function (req, res) {
 });
 
 
-/* reg page. */
-// router.get('/reg',checkLogin)
-router.get('/reg',function (req, res, next) {
-	res.render('reg', {
-		title: '注册',
-		user: req.session.user,
-		success: req.flash('success').toString(),
-		error: req.flash('error').toString()
-	});
+
+/* index page */
+router.get('/',function (req, res, next) {
+	res.render('index', {title: 'pspgbhu的主页'});
 })
 
 
-// router.post('/reg',checkLogin);
-router.post('/reg',function (req, res) {
-	var name = req.body.name,
-			password = req.body.password,
-			password_re = req.body.passwordrepeat;
-			email = req.body.email
-	//检验用户名密码是否为空
-	if(name === "" || password === "" || name === null || password === null ){
-		req.flash('error','用户名或密码不能为空！')
-		return res.redirect('/reg');
-	};
-	//检验邮箱是否为空
-	if(email === "" || email === null){
-		req.flash('error','请输入正确的邮箱地址！')
-		return res.redirect('/reg');
-	}
-	//检验两次密码是否一致
-	if(password != password_re){
-		req.flash('error','两次输入的密码不一致！');
-		return res.redirect('/reg');//返回注册页
-	};
-	//生成密码的md5值
-	var md5 = crypto.createHash('md5'),
-			password = md5.update(req.body.password).digest('hex');
-	var newUser = new User({
-			name: name,
-			password: password,
-			email: req.body.email
-	});
-	//检查用户名是否存在
-	User.get(newUser.name, function (err, user){
-		if(err) {
-			req.flash('error', err);
-			return res.redirect('/')
-		} 
-		if(user) {
-			req.flash('error','用户已存在！')
-			return res.redirect('/reg')
+/* blog page. */
+router.get('/blog', function(req, res, next) {
+	var page = parseInt(req.query.p) || 1
+	Post.getFive(null, page, function (err, posts, total) {
+		if(err){
+			posts = [];
 		}
-		//如果不存在则新增用户
-		newUser.save(function (err, user) {
-			if(err){
-				req.flash('error', err)
-				return res.redirect('/reg')
-			}
-			req.session.user = newUser;//用户信息存入session
-			req.flash('success','注册成功!')
-			res.redirect('/');
-		})
+		res.render('blog', {
+			title: '主页',
+			user: req.session.user,
+			posts: posts,
+			page: page,
+			isFirstPage: (page - 1) == 0,
+			isLastPage:((page - 1) * 10 + posts.length) == total,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
 	})
-})
+});
 
 
 /* post page. */
@@ -231,7 +234,28 @@ router.get('/u/:name', function (req, res) {
 
 /* article */
 // router.get('/u/:name/:day/:title',checkLogout);
-router.post('')
+router.post('/:day/:title',function (req, res) {
+	var date = new Date(),
+      time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
+             date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+	var comment = {
+		"name": req.body.visitorName,
+		"email": req.body.visitorEmail,
+		"time": time,
+		"content": req.body.visitorContent
+	}
+
+	var newComment = new Comment(req.params.day, req.params.title, comment);
+	newComment.save(function (err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('back');
+		}
+		req.flash('success', '留言成功！');
+		return res.redirect('back');
+	});
+});
+
 router.get('/:day/:title', function (req, res) {
 	Post.getOne(req.params.day, req.params.title, function (err, post) {
 		if(err){
@@ -247,6 +271,7 @@ router.get('/:day/:title', function (req, res) {
 		});
 	});
 });
+
 
 
 /* edit */
@@ -273,7 +298,7 @@ router.get('/edit/:name/:day/:title', function (req, res){
 router.post('/edit/:name/:day/:title',function (req, res) {
 	var currentUser = req.session.user;
 	Post.update(currentUser.name, req.params.day, req.params.title, req.body.post, function (err) {
-		var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title)
+		var url = encodeURI('/' + req.params.day + '/' + req.params.title)
 		if(err){
 			req.flash('error',err);
 			return res.redirect('/');

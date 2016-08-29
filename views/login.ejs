@@ -1,13 +1,21 @@
  <%- include header %>
-	<form method="post" class="reg">
-	  	<div class="form-group">
-	  		<label for="username">用户名</label>
-	  		<input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
-	  	</div>
-	  	<div class="form-group">
-	    	<label for="password">Password</label>
-	    	<input type="password" class="form-control" name="password" id="password" placeholder="请输入密码">
-	  	</div>
-	  	<button type="submit" class="btn btn-default">登录</button>
-	</form>
+ 	<div class="container">
+ 	 	<% if (success) { %>
+		  	<div><%= success %></div>
+		<% } %>
+		<% if (error) { %>
+		  	<div><%= error %> </div>
+		<% } %>
+		<form method="post" class="reg">
+		  	<div class="form-group">
+		  		<label for="username">用户名</label>
+		  		<input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
+		  	</div>
+		  	<div class="form-group">
+		    	<label for="password">Password</label>
+		    	<input type="password" class="form-control" name="password" id="password" placeholder="请输入密码">
+		  	</div>
+		  	<button type="submit" class="btn btn-default">登录</button>
+		</form>
+ 	</div>
 <%- include footer %>
