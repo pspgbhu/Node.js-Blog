@@ -17,7 +17,6 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
 //session
 var settings = require('./settings');
 app.use(session({

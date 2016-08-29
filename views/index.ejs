@@ -1,13 +1,7 @@
 <%- include header %>
-<% posts.forEach(function (post, index){ %>
-	<p><h3>
-		<a href="u/<%= post.name %>/<%= post.time.day %>/<%= post.title %>"><%= post.title %></a></h3>
-	</p>
-	<p>
-		作者：<a href="u/<%= post.name %>"><%= post.name %></a> |
-		日期：<%= post.time.minute %>
-	</p>
-	<p><%- post.post %></p>	
-<% }) %>
-<%- include paging %>
-<%- include footer %> 
+	<div class="page page-index">
+		<a href="/blog">
+			<h1>Welcome To Pspgbhu's Page</h1>
+		</a>
+	</div>
+<%- include footer %>

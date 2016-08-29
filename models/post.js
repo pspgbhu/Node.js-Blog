@@ -93,7 +93,7 @@ Post.getFive =function (name, page,callback) {
 };
 
 //获取一篇文章
-Post.getOne = function (name, day, title, callback) {
+Post.getOne = function (day, title, callback) {
   //打开数据库
   mongodb.open(function (err, db) {
     if(err){
@@ -103,7 +103,6 @@ Post.getOne = function (name, day, title, callback) {
     db.collection('posts',function (err,collection) {
       //跟据用户名，发表时间及文章名进行查询
       collection.findOne({
-        "name": name,
         "time.day": day,
         "title": title
       }, function (err, doc) {

@@ -1,35 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<title><%= title%></title>
-<link rel='stylesheet' href='/stylesheets/style.css' />
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="pspgbhu <brotherchun001@gmail.com>">
 <!-- 新 Bootstrap 核心 CSS 文件 -->
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel='stylesheet' href='/stylesheets/style.css' />
+<title>pspgbhu的博客</title>
 </head>
 <body>
-<div class="container home">
-	<div class="nav">
-		<nav>
-            <ul>
-				<li><a href="/">主页</a></li>
-                <% if( user ) { %>
-                <li><a href="/post">发表</a></li>
-                <li><a href="/logout">登出</a></li>  
-                <% }else{ %>
-				<li><a href="/login">登录</a></li>
-                <li><a href="/reg">注册</a></li>    
-                <% } %>
-			</ul>
-		</nav>
-    </div>
-    <div class="content">
-        <div class="home-h1">
-            <h1><%= title%></h1>
-        </div>
-    	<article class="article">
-        <% if (success) { %>
-            <div><%= success %></div>
-        <% } %>
-        <% if (error) { %>
-            <div><%= error %> </div>
-        <% } %>

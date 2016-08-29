@@ -7,20 +7,26 @@ var	User = require('../models/user.js');
 var Post = require('../models/post.js');
 var Comment = require('../models/comment.js')
 
-/* home page. */
-router.get('/', function(req, res, next) {
+/* index page */
+router.get('/',function (req, res, next) {
+	res.render('index', {title: 'pspgbhu的主页'});
+})
+
+
+/* blog page. */
+router.get('/blog', function(req, res, next) {
 	var page = parseInt(req.query.p) || 1
 	Post.getFive(null, page, function (err, posts, total) {
 		if(err){
 			posts = [];
 		}
-		res.render('index', {
+		res.render('blog', {
 			title: '主页',
 			user: req.session.user,
 			posts: posts,
 			page: page,
 			isFirstPage: (page - 1) == 0,
-			isLastPage:((page - 1) * 5 + posts.length) == total,
+			isLastPage:((page - 1) * 10 + posts.length) == total,
 			success: req.flash('success').toString(),
 			error: req.flash('error').toString()
 		});
@@ -29,7 +35,7 @@ router.get('/', function(req, res, next) {
 
 
 /* login page. */
-router.get('/login',checkLogin);
+// router.get('/login',checkLogin);
 router.get('/login',function (req, res, next) {
 	res.render('login',{ 
 		title: '登录',
@@ -39,7 +45,7 @@ router.get('/login',function (req, res, next) {
 	})
 });
 
-router.post('/login',checkLogin);
+// router.post('/login',checkLogin);
 router.post('/login',function (req, res) {
 	//生成密码的 md5 值
   var md5 = crypto.createHash('md5'),
@@ -65,7 +71,7 @@ router.post('/login',function (req, res) {
 
 
 /* reg page. */
-router.get('/reg',checkLogin)
+// router.get('/reg',checkLogin)
 router.get('/reg',function (req, res, next) {
 	res.render('reg', {
 		title: '注册',
@@ -75,7 +81,8 @@ router.get('/reg',function (req, res, next) {
 	});
 })
 
-router.post('/reg',checkLogin);
+
+// router.post('/reg',checkLogin);
 router.post('/reg',function (req, res) {
 	var name = req.body.name,
 			password = req.body.password,
@@ -129,7 +136,7 @@ router.post('/reg',function (req, res) {
 
 
 /* post page. */
-router.get('/post',checkLogout);
+// router.get('/post',checkLogout);
 router.get('/post',function (req, res, next) {
 	res.render('post',{ 
 		title: '发表',
@@ -139,7 +146,7 @@ router.get('/post',function (req, res, next) {
 	})
 })
 
-router.post('/post',checkLogout);
+// router.post('/post',checkLogout);
 router.post('/post',function (req, res) {
 	var currentUser = req.session.user;
 	var title = req.body.title;
@@ -186,7 +193,7 @@ router.post('/upload', upload.single('file'), function (req, res, next) {
 
 
 /* logout page. */
-router.get('/logout',checkLogout);
+// router.get('/logout',checkLogout);
 router.get('/logout',function (req, res, next) {
 	req.session.user = null;
 	req.flash('success',"登出成功！");
@@ -195,7 +202,7 @@ router.get('/logout',function (req, res, next) {
 
 
 /* user */
-router.get('/u/:name',checkLogout);
+// router.get('/u/:name',checkLogout);
 router.get('/u/:name', function (req, res) {
 	User.get(req.params.name, function (err, user) {
 		if(!user){
@@ -223,9 +230,10 @@ router.get('/u/:name', function (req, res) {
 
 
 /* article */
-router.get('/u/:name/:day/:title',checkLogout);
-router.get('/u/:name/:day/:title', function (req, res) {
-	Post.getOne(req.params.name, req.params.day, req.params.title, function (err, post) {
+// router.get('/u/:name/:day/:title',checkLogout);
+router.post('')
+router.get('/:day/:title', function (req, res) {
+	Post.getOne(req.params.day, req.params.title, function (err, post) {
 		if(err){
 			req.flash('error', err);
 			return res.redirect('/')
@@ -242,7 +250,7 @@ router.get('/u/:name/:day/:title', function (req, res) {
 
 
 /* edit */
-router.get('/edit/:name/:day/:title', checkLogout);
+// router.get('/edit/:name/:day/:title', checkLogout);
 router.get('/edit/:name/:day/:title', function (req, res){
 	var currentUser = req.session.user;
 	Post.edit(currentUser.name, req.params.day, req.params.title, function (err, post) {
@@ -261,7 +269,7 @@ router.get('/edit/:name/:day/:title', function (req, res){
 	});
 });
 
-router.post('/edit/:name/:day/:title',checkLogout);
+// router.post('/edit/:name/:day/:title',checkLogout);
 router.post('/edit/:name/:day/:title',function (req, res) {
 	var currentUser = req.session.user;
 	Post.update(currentUser.name, req.params.day, req.params.title, req.body.post, function (err) {
@@ -277,7 +285,7 @@ router.post('/edit/:name/:day/:title',function (req, res) {
 
 
 /* remove */
-router.get('/remove/:name/:day/:title',checkLogout);
+// router.get('/remove/:name/:day/:title',checkLogout);
 router.get('/remove/:name/:day/:title',function (req, res) {
 	var currentUser = req.session.user;
 	Post.remove(req.params.name, req.params.day, req.params.title, function (err) {
@@ -291,24 +299,22 @@ router.get('/remove/:name/:day/:title',function (req, res) {
 })
 
 
-/* comment */
-router.get('')
 
-function checkLogin(req, res, next) {
-	if(req.session.user){
-		req.flash('error', '已登录！');
-		res.redirect('back');
-	}
-	next();
-}
+// function checkLogin(req, res, next) {
+// 	if(req.session.user){
+// 		req.flash('error', '已登录！');
+// 		res.redirect('back');
+// 	}
+// 	next();
+// }
 
-function checkLogout(req, res, next) {
-	if(!req.session.user){
-		req.flash('error',"未登录！");
-		res.redirect('back');
-	}
-	next();
-}
+// function checkLogout(req, res, next) {
+// 	if(!req.session.user){
+// 		req.flash('error',"未登录！");
+// 		res.redirect('back');
+// 	}
+// 	next();
+// }
 
 
 module.exports = router;
