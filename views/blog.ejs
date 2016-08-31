@@ -1,16 +1,24 @@
 <%- include header %>
 <%- include header_main %>
+
 <div class="clearfix">
-	<form method="get" action="/blog">
 		<ul class="rank">
-			<li>
-				<label for="rank-time">按最新发布时间排序</label>
-				<input id="rank-time" type="submit" name="rank" value="time" style="display: none;"></li>
-			<li>
-				<label for="rank-views">最多浏览次数排序</label>
-				<input id="rank-views" type="submit" name="rank" value="views" style="display: none;"></li>
+			<form method="get" action="/blog">
+				<li>
+					<label for="rank-time">按最新发布时间排序</label>
+					<input id="rank-time" type="submit" name="rank" value="time" style="display: none;"></li>
+				<li>
+					<label for="rank-views">最多浏览次数排序</label>
+					<input id="rank-views" type="submit" name="rank" value="views" style="display: none;"></li>
+			</form>
+			<form  method="get" action="/blog">
+				<li>
+					<label>搜索</label>
+					<input type="search" class="search form-control" name="search" placeholder="请输入搜索关键字" />
+					<button class="search-btn btn btn-default">搜索</button>
+				</li>
+			</form>
 		</ul>
-	</form>
 </div>
 <div class="blogBox">
 
@@ -30,10 +38,8 @@
 			</p>
 		</a>
 
-	<% }) %>	
-
+	<% }) %>
 </div>
-
 
 <%- include footer_main %>
 <%- include footer %>

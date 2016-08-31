@@ -67,10 +67,12 @@ Post.getSome =function (name, page, sortWay, callback) {
 				mongodb.close();
 				return callback(err);
 			}
-			var query = {};
-			if(name){
-				query.name = name;
-			}
+			var query = {}
+      // if(search){
+      //   query = {
+      //     title: "第三"
+      //   }
+      // }
       var sort = {};
       sort[sortWay] = -1;
 			//跟据query对象查找文章

@@ -43,6 +43,7 @@ router.get('/blog',function (req, res, next) {
 	if(!sortWay) {
 		sortWay = "time";
 	}
+	var search = '第三'
 	Post.getSome(null, page, sortWay, function (err, posts, total) {
 		if(err){
 			posts = [];
@@ -138,8 +139,6 @@ router.get('/about',function (req, res, next) {
 		error: req.flash('error').toString()
 	})
 })
-
-
 
 
 /*
