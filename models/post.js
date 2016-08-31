@@ -26,7 +26,8 @@ Post.prototype.save = function (callback) {
   	time: time,
   	title: this.title,
   	post: this.post,
-    comments: [] 
+    comments: [],
+    views: 0
   };
   //打开数据库
   mongodb.open(function (err, db) {
@@ -54,7 +55,7 @@ Post.prototype.save = function (callback) {
 };
 
 //读取所有文章及其相关信息
-Post.getFive =function (name, page,callback) {
+Post.getSome =function (name, page, sortWay, callback) {
 	//打开数据库
 	mongodb.open(function (err, db) {
 		if(err){
@@ -70,14 +71,14 @@ Post.getFive =function (name, page,callback) {
 			if(name){
 				query.name = name;
 			}
+      var sort = {};
+      sort[sortWay] = -1;
 			//跟据query对象查找文章
 			collection.count(query,function (err, total) {
         collection.find(query, {
           skip: (page - 1) * 10,
           limit: 10
-        }).sort({
-          time: -1
-        }).toArray(function (err, docs) {
+        }).sort(sort).toArray(function (err, docs) {
           mongodb.close();
           if(err){
             return callback(err);
@@ -102,30 +103,48 @@ Post.getOne = function (day, title, callback) {
     }
     //读取posts集合
     db.collection('posts',function (err,collection) {
+      if(err){
+        mongodb.close();
+        return callback("读取posts集合失败！(getOne)")
+      }
       //跟据用户名，发表时间及文章名进行查询
       //取得一篇文章
       collection.findOne({
         "time.day": day,
         "title": title
       }, function (err, doc) {
-        mongodb.close();
         if(err){
+          mongodb.close();
           return callback('操作数据库失败！(getOne)');
         };
         if(doc){
+          collection.update({
+            "title": title,
+            "time.day": day
+          }, {
+            $inc: {"views": 1}
+          }, function (err) {
+            mongodb.close();
+            if(err){
+              return callback("操作数据库失败！(viewTimes)");
+            };
+          });
           //文章中的正文进行转换
           doc.post = markdown.toHTML(doc.post);
-          if(doc.comments){
-            // comment.content = markdown.toHTML(comment.content)
-            // doc.comments.forEach(function (comment) {
-            // });
-          }
+          // if(doc.comments){
+          //   doc.comments.forEach(function (comment) {
+          //     comment.content = markdown.toHTML(comment.content)
+          //     console.log(comment);
+          //   });
+          // }
+          console.log(doc.comments.length);
+          callback(null, doc);
         };
-        callback(null, doc);
       });
     });
   });
 };
+
 
 //返回原始发表的内容（markdown 格式）
 Post.edit = function (name, day, title, callback) {
@@ -149,6 +168,7 @@ Post.edit = function (name, day, title, callback) {
   });
 };
 
+
 //增加阅读计数
 Post.view = function (day, title, callback) {
   mongodb.open(function (err, db) {
@@ -157,19 +177,19 @@ Post.view = function (day, title, callback) {
     };
     db.collection('post', function (err, collection) {
       if(err) {
-        return callback("数据库操作失败！");
+        return callback("数据库集合获取失败！(viewTimes)");
       };
       collection.update({
         "title": title,
         "time.day": day
       },{
-        $inc: {"viewTimes": 1}
+        $inc: {"views": 1}
       },{
         upsert: true
       },function (err) {
         mongodb.close();
         if(err){
-          return callback(err);
+          return callback("数据库操作失败！(viewTimes)");
         };
         callback(null);
       })
@@ -193,7 +213,7 @@ Post.update = function (name, day, title, post, callback) {
         "time.day": day,
         "title": title
       },{
-        
+        $set: {post}
       },function (err) {
         mongodb.close();
         if(err){

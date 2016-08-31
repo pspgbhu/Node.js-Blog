@@ -20,6 +20,7 @@ body{
 	margin: auto;
 }
 .header{
+	margin-bottom: 20px;
 	width: 100%;
 	min-height: 50px;
 	background-color: #336699;
@@ -51,6 +52,9 @@ ul{
 }
 .content{
 	padding: 25px 0;
+}
+.main{
+	margin-bottom: 200px;
 }
 /*
 * page-index
@@ -128,17 +132,83 @@ ul{
 	width: 70%;
 	float: left;
 }
+.blogBox span{
+	padding-right: 15px;
+}
 .blog{
+	color: #333;
+	display: block;
 	border-bottom: 1px solid #ccc;
 }
+.blog:hover{
+	-webkit-animation: blog .5s ease-out;
+	-o-animation: blog .5s ease-out;
+	animation: blog .5s ease-out;
+}
+@-webkit-keyframes blog {
+	from { 
+		opacity: .5;
+		-webkit-transform: -webkit-translate(-10px,0)
+	 }
+	to { 
+		opacity: 1;
+		-webkit-transform: -webkit-translate(0,0); 
+	 }
+}
+@-o-keyframes blog {
+	from { 
+		opacity: .5;
+		-o-transform: -o-translate(-10px,0)
+	 }
+	to { 
+		opacity: 1;
+		-o-transform: -o-translate(0,0); 
+	 }
+}
+@-moz-keyframes blog {
+	from { 
+		opacity: .5;
+		-moz-transform: -moz-translate(-10px,0)
+	 }
+	to { 
+		opacity: 1;
+		-moz-transform: -moz-translate(0,0); 
+	 }
+}
+@keyframes blog {
+	from { 
+		opacity: .5;
+		transform: translate(-10px,0)
+	 }
+	to { 
+		opacity: 1;
+		transform: translate(0,0); 
+	 }
+}
+
+
 .blog img{
 	max-width: 100%
 }
 .latest{
 	float: right;
 	width: 30%;
-	text-align: center;
+	
+}
+.latest ul {
 	list-style: none;
+	text-align: left;
+	width: 180px;
+	margin: auto;
+	overflow: hidden;
+
+}
+.latest li{
+	font-size: 18px;
+	padding: 10px;
+}
+.latest h3{
+	padding: 10px;
 }
 /*
 * page-article
@@ -158,4 +228,16 @@ ul{
 }
 .newComment h4,.comments h4{
 	padding-bottom: 20px;
+}
+
+/*
+* page-rank
+*/
+.rank li{
+	float: left;
+	list-style: none;
+	padding-right: 20px;
+}
+.rank li label{
+	cursor: pointer;
 }

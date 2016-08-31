@@ -1,0 +1,47 @@
+<%- include header %>
+<%- include header_main %>
+
+
+<div class="blogBox">
+
+	<% posts.forEach(function (post, index){ %>
+
+		<a class="blog"  href="<%= post.time.day %>/<%= post.title %>">
+			<p>
+				<h3><%= post.title %></h3></p>
+
+			<p>
+				<span>日期：<%= post.time.minute %></span>
+				<span>阅读：<% if (post.views) { -%><%= post.views %>次<% } else { -%>0次<% } -%></span>
+				<span>评论：<%= post.comments.length %>人</span>				
+			</p>
+
+			<p><%- post.post %></p>	
+
+		</a>
+
+	<% }) %>	
+
+</div>
+
+
+
+<div class="latest">
+	<ul>
+
+		<h3>最新文章列表</h3>
+
+		<% posts.forEach(function(post, index){ %>
+		
+			<% if(index > 4) return false %>
+
+			<li><a  href="<%= post.time.day %>/<%= post.title %>"><%=post.title %></a></li>
+
+		<% }) %>
+
+	</ul>
+</div>
+
+<%- include paging %>
+<%- include footer_main %>
+<%- include footer %> 

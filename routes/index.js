@@ -7,6 +7,146 @@ var	User = require('../models/user.js');
 var Post = require('../models/post.js');
 var Comment = require('../models/comment.js')
 
+
+/* index page */
+router.get('/',function (req, res, next) {
+	res.render('index', {title: 'pspgbhu的主页'});
+})
+
+
+/* home page. */
+router.get('/home', function(req, res, next) {
+	var page = parseInt(req.query.p) || 1;
+	var sortWay = "time";
+	Post.getSome(null, page, sortWay, function (err, posts, total) {
+		if(err){
+			posts = [];
+		}
+		res.render('home', {
+			title: '主页',
+			user: req.session.user,
+			posts: posts,
+			page: page,
+			isFirstPage: (page - 1) == 0,
+			isLastPage:((page - 1) * 10 + posts.length) == total,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
+	});
+});
+
+
+/* blog page. */
+router.get('/blog',function (req, res, next) {
+	var page = parseInt(req.query.p) || 1;
+	var sortWay = req.query.rank;
+	if(!sortWay) {
+		sortWay = "time";
+	}
+	Post.getSome(null, page, sortWay, function (err, posts, total) {
+		if(err){
+			posts = [];
+		}
+		res.render('blog', {
+			title: '主页',
+			user: req.session.user,
+			posts: posts,
+			page: page,
+			isFirstPage: (page - 1) == 0,
+			isLastPage:((page - 1) * 10 + posts.length) == total,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
+	});
+})
+
+
+// /* user */
+// router.get('/u/:name', function (req, res) {
+// 	User.get(req.params.name, function (err, user) {
+// 		if(!user){
+// 			req.flash('error', '用户不存在！');
+// 			return res.redirect('/');
+// 		}
+// 		Post.getSome(user.name, page, function (err, posts, total) {
+// 			if(err){
+// 				req.flash('error', err);
+// 				return res.redirect('/');
+// 			}
+// 			res.render('user', {
+// 				title: user.name,
+// 				posts: posts,
+// 				user : req.session.user,
+// 				page: page,
+//         isFirstPage: (page - 1) == 0,
+//         isLastPage: ((page - 1) * 10 + posts.length) == total,
+// 				success: req.flash('success').toString(),
+// 				error: req.flash('error').toString()
+// 			});
+// 		});
+// 	});
+// });
+
+
+/* article page */
+router.post('/:day/:title',function (req, res) {
+	var date = new Date(),
+      time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
+             date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+
+	var comment = {
+		"name": req.body.visitorName,
+		"email": req.body.visitorEmail,
+		"time": time,
+		"content": req.body.visitorContent
+	}
+
+	var newComment = new Comment(req.params.day, req.params.title, comment);
+
+	newComment.save(function (err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('back');
+		}
+		req.flash('success', '留言成功！');
+		return res.redirect('back');
+	});
+});
+
+router.get('/:day/:title', function (req, res) {
+	Post.getOne(req.params.day, req.params.title, function (err, post) {
+		if(err){
+			req.flash('error', err);
+			return res.redirect('/blog')
+		}
+		res.render('article',{
+			title: req.params.title,
+			post: post,
+			user: req.session.user,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
+	});
+});
+
+
+/* about page. */
+router.get('/about',function (req, res, next) {
+	res.render('about', {
+		user: req.session.user,
+		success: req.flash('success').toString(),
+		error: req.flash('error').toString()
+	})
+})
+
+
+
+
+/*
+****************************************
+*/
+
+
 /* login page. */
 router.get('/login',function (req, res, next) {
 	res.render('login',{ 
@@ -41,6 +181,12 @@ router.post('/login',function (req, res) {
 });
 
 
+/* logout page. */
+router.get('/logout',function (req, res, next) {
+	req.session.user = null;
+	req.flash('success',"登出成功！");
+	res.redirect('/')
+});
 
 
 /* reg page. */
@@ -105,40 +251,6 @@ router.post('/reg',function (req, res) {
 })
 
 
-
-
-
-/* index page */
-router.get('/',function (req, res, next) {
-	res.render('index', {title: 'pspgbhu的主页'});
-})
-
-
-
-
-/* blog page. */
-router.get('/blog', function(req, res, next) {
-	var page = parseInt(req.query.p) || 1
-	Post.getFive(null, page, function (err, posts, total) {
-		if(err){
-			posts = [];
-		}
-		res.render('blog', {
-			title: '主页',
-			user: req.session.user,
-			posts: posts,
-			page: page,
-			isFirstPage: (page - 1) == 0,
-			isLastPage:((page - 1) * 10 + posts.length) == total,
-			success: req.flash('success').toString(),
-			error: req.flash('error').toString()
-		});
-	})
-});
-
-
-
-
 /* post page. */
 router.get('/post',function (req, res, next) {
 	res.render('post',{ 
@@ -170,8 +282,6 @@ router.post('/post',function (req, res) {
 });
 
 
-
-
 /* upload page. */
 var storage = multer.diskStorage({
     destination: function (req, file, cb){
@@ -193,101 +303,6 @@ router.post('/upload', upload.single('file'), function (req, res, next) {
 		}
 	})
 });
-
-
-
-/* logout page. */
-router.get('/logout',function (req, res, next) {
-	req.session.user = null;
-	req.flash('success',"登出成功！");
-	res.redirect('/')
-});
-
-
-
-
-/* user */
-router.get('/u/:name', function (req, res) {
-	User.get(req.params.name, function (err, user) {
-		if(!user){
-			req.flash('error', '用户不存在！');
-			return res.redirect('/');
-		}
-		Post.getFive(user.name, page, function (err, posts, total) {
-			if(err){
-				req.flash('error', err);
-				return res.redirect('/');
-			}
-			res.render('user', {
-				title: user.name,
-				posts: posts,
-				user : req.session.user,
-				page: page,
-        isFirstPage: (page - 1) == 0,
-        isLastPage: ((page - 1) * 10 + posts.length) == total,
-				success: req.flash('success').toString(),
-				error: req.flash('error').toString()
-			});
-		});
-	});
-});
-
-
-
-
-/* article page */
-router.post('/:day/:title',function (req, res) {
-
-	var date = new Date(),
-      time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
-             date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
-
-	var comment = {
-		"name": req.body.visitorName,
-		"email": req.body.visitorEmail,
-		"time": time,
-		"content": req.body.visitorContent
-	}
-
-	var newComment = new Comment(req.params.day, req.params.title, comment);
-
-	newComment.save(function (err) {
-		if (err) {
-			req.flash('error', err);
-			return res.redirect('back');
-		}
-		req.flash('success', '留言成功！');
-		return res.redirect('back');
-	});
-});
-
-
-router.get('/:day/:title', function (req, res) {
-	Post.view(req.params.day, req.params.title, function (err) {
-		if(err){
-			req.flash('error', err);
-			return res.redirect('/blog');
-			console.log('console.log(views)')
-		};
-		res.redirect('/');
-	});
-
-	// Post.getOne(req.params.day, req.params.title, function (err, post) {
-	// 	if(err){
-	// 		req.flash('error', err);
-	// 		return res.redirect('/blog')
-	// 	}
-	// 	console.log(post.comments)
-	// 	res.render('article',{
-	// 		title: req.params.title,
-	// 		post: post,
-	// 		user: req.session.user,
-	// 		success: req.flash('success').toString(),
-	// 		error: req.flash('error').toString()
-	// 	});
-	// });
-});
-
 
 
 /* edit page. */
