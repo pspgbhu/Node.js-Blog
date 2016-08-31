@@ -18,7 +18,7 @@ router.get('/',function (req, res, next) {
 router.get('/home', function(req, res, next) {
 	var page = parseInt(req.query.p) || 1;
 	var sortWay = "time";
-	Post.getSome(null, page, sortWay, function (err, posts, total) {
+	Post.getSome(null, page, sortWay, null,function (err, posts, total) {
 		if(err){
 			posts = [];
 		}
@@ -38,13 +38,17 @@ router.get('/home', function(req, res, next) {
 
 /* blog page. */
 router.get('/blog',function (req, res, next) {
-	var page = parseInt(req.query.p) || 1;
-	var sortWay = req.query.rank;
-	if(!sortWay) {
-		sortWay = "time";
+	var page 		= parseInt(req.query.p) || 1;
+	var sortWay = "time";
+	var search 	= null;
+	if(req.query.rank) {
+		sortWay = req.query.rank;
 	}
-	var search = '第三'
-	Post.getSome(null, page, sortWay, function (err, posts, total) {
+	if(req.query.search) {
+    search = req.query.search;
+  }
+  console.log('search :' + search);
+	Post.getSome(null, page, sortWay, search,function (err, posts, total) {
 		if(err){
 			posts = [];
 		}
