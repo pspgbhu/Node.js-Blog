@@ -26,7 +26,7 @@ Post.prototype.save = function (callback) {
   	time: time,
   	title: this.title,
   	post: this.post,
-    comments: {}
+    comments: [] 
   };
   //打开数据库
   mongodb.open(function (err, db) {
@@ -92,30 +92,33 @@ Post.getFive =function (name, page,callback) {
 	});
 };
 
+
 //获取一篇文章
 Post.getOne = function (day, title, callback) {
   //打开数据库
   mongodb.open(function (err, db) {
     if(err){
-      return callback(err);
+      return callback('打开数据库失败！');
     }
     //读取posts集合
     db.collection('posts',function (err,collection) {
       //跟据用户名，发表时间及文章名进行查询
+      //取得一篇文章
       collection.findOne({
         "time.day": day,
         "title": title
       }, function (err, doc) {
         mongodb.close();
         if(err){
-          return callback(err);
+          return callback('操作数据库失败！(getOne)');
         };
         if(doc){
+          //文章中的正文进行转换
           doc.post = markdown.toHTML(doc.post);
           if(doc.comments){
-            doc.comments.forEach(function (comment) {
-              comment.content = markdown.toHTML(comment.content)
-            });
+            // comment.content = markdown.toHTML(comment.content)
+            // doc.comments.forEach(function (comment) {
+            // });
           }
         };
         callback(null, doc);
@@ -141,10 +144,39 @@ Post.edit = function (name, day, title, callback) {
           return callback(err);
         };
         callback(null, doc);
+      });
+    });
+  });
+};
+
+//增加阅读计数
+Post.view = function (day, title, callback) {
+  mongodb.open(function (err, db) {
+    if(err) {
+      return callback("打开数据库失败！(viewTimes)")
+    };
+    db.collection('post', function (err, collection) {
+      if(err) {
+        return callback("数据库操作失败！");
+      };
+      collection.update({
+        "title": title,
+        "time.day": day
+      },{
+        $inc: {"viewTimes": 1}
+      },{
+        upsert: true
+      },function (err) {
+        mongodb.close();
+        if(err){
+          return callback(err);
+        };
+        callback(null);
       })
     })
   })
 }
+
 
 //更新一篇文章
 Post.update = function (name, day, title, post, callback) {
@@ -161,17 +193,18 @@ Post.update = function (name, day, title, post, callback) {
         "time.day": day,
         "title": title
       },{
-        $set: {post: post}
+        
       },function (err) {
         mongodb.close();
         if(err){
           return callback(err);
         };
-        callback(null)
+        callback(null);
       })
     })
   })
 }
+
 
 //删除一篇文章
 Post.remove = function (name, day, title, callback) {

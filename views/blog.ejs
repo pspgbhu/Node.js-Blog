@@ -1,14 +1,36 @@
 <%- include header %>
 <%- include header_main %>
-<% posts.forEach(function (post, index){ %>
-	<div class="articleBox">
-		<p>
-			<h3><a href="<%= post.time.day %>/<%= post.title %>"><%= post.title %></a></h3></p>
-		<p>
-			日期：<%= post.time.minute %></p>
-		<p><%- post.post %></p>	
-	</div>
-<% }) %>
+
+
+<div class="blogBox">
+	<% posts.forEach(function (post, index){ %>
+
+		<div class="blog">
+			<p>
+				<h3><a href="<%= post.time.day %>/<%= post.title %>"><%= post.title %></a></h3></p>
+			<p>
+				日期：<%= post.time.minute %></p>
+			<p><%- post.post %></p>	
+		</div>
+
+	<% }) %>	
+</div>
+
+
+
+<ul class="latest">
+	<p>最新文章列表</p>
+
+	<% posts.forEach(function(post, index){ %>
+		
+		<% if(index > 4) return false %>
+
+		<li><a  href="<%= post.time.day %>/<%= post.title %>"><%=post.title %></a></li>
+
+	<% }) %>
+
+</ul>
+
 <%- include paging %>
 <%- include footer_main %>
 <%- include footer %> 

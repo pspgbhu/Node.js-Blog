@@ -52,7 +52,7 @@ function insertAtCursor(myField, myValue) {
       //插入信息 
       myField.value = myField.value.substring(0, startPos) 
           + myValue 
-          + myField.value.substring(endPos, myField.value.length); 
+          + myField.value.substring(endPos, myField.value.length);
     } else { 
 
       //没有焦点的话直接加在TEXTAREA的最后一位 
