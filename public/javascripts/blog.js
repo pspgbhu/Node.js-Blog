@@ -28,6 +28,7 @@ function uploadFile(){
   return imgsrc;
 };
 
+
 //myField 光标所在的控件名 document.Form.XXX 
 //myValue 所要插入的值 
 function insertAtCursor(myField, myValue) { 
@@ -42,13 +43,10 @@ function insertAtCursor(myField, myValue) {
     }   
 		else if (myField.selectionStart || myField.selectionStart == '0') { 
       // MOZILLA/NETSCAPE support 
-
       //起始位置 
       var startPos = myField.selectionStart; 
-
       //结束位置 
       var endPos = myField.selectionEnd; 
-
       //插入信息 
       myField.value = myField.value.substring(0, startPos) 
           + myValue 

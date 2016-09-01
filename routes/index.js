@@ -41,13 +41,14 @@ router.get('/blog',function (req, res, next) {
 	var page 		= parseInt(req.query.p) || 1;
 	var sortWay = "time";
 	var search 	= null;
-	if(req.query.rank) {
+	
+  if(req.query.rank) {
 		sortWay = req.query.rank;
 	}
 	if(req.query.search) {
     search = req.query.search;
   }
-  console.log('search :' + search);
+
 	Post.getSome(null, page, sortWay, search,function (err, posts, total) {
 		if(err){
 			posts = [];
@@ -55,6 +56,7 @@ router.get('/blog',function (req, res, next) {
 		res.render('blog', {
 			title: '主页',
 			user: req.session.user,
+      search: search,
 			posts: posts,
 			page: page,
 			isFirstPage: (page - 1) == 0,

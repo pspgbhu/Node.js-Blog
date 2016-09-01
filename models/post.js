@@ -73,9 +73,8 @@ Post.getSome =function (name, page, sortWay, search,callback) {
       //设置query对象
       var query = {};
       if (search) {
-        query.title = new RegExp(search);
+        query.title = new RegExp(search, 'i');
       }
-      console.log(query.title);
       //设置排序方式
       var sort = {};
       sort[sortWay] = -1;
