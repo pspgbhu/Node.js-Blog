@@ -1,6 +1,6 @@
-# blog
+# Blog
 
-nodejs 第一个博客实例
+Node.js 博客实例
 开发环境：
  - nodejs   6.3.1
  - express 4.13.4
